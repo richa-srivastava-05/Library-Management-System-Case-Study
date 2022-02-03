@@ -16,7 +16,7 @@ public class Books {
          ResultSet rs = stmt.executeQuery(sql);
          while(rs.next()) {
             System.out.println(rs.getInt(1)+" | "+rs.getString(2)+" | "+rs.getString(3)+" | "+rs.getInt(4));
-            System.out.println("---------------------------------------------------");   
+            System.out.println("-----------------------------------------------------------------");   
          
          }
 		}
@@ -64,8 +64,8 @@ public class Books {
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "mysql@richa");
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		System.out.println("B_ID  NAME  AUTHOR  U_ID");
-		System.out.println("-------------------------");
+		System.out.println("B_ID  NAME  AUTHOR  U_ID  R_DATE(YYYY/MM/DD)");
+		System.out.println("----------------------------------------------");
 		 String sql ="Select * from BOOK_REQUEST Where user_id='" + id + "'";
 		 Statement stmt =con.createStatement();
          ResultSet rs = stmt.executeQuery(sql);
@@ -88,14 +88,14 @@ public class Books {
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "mysql@richa");
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		System.out.println("B_ID  NAME  AUTHOR  U_ID");
-		System.out.println("-------------------------");
+		System.out.println("B_ID  NAME  AUTHOR  U_ID  I_DATE(YYYY/MM/DD)");
+		System.out.println("-----------------------------------------------");
 		 String sql ="Select * from ACCEPTED_REQUEST Where user_id='" + id  + "'";
 		 Statement stmt =con.createStatement();
          ResultSet rs = stmt.executeQuery(sql);
          while(rs.next()) {
             System.out.println(rs.getInt(1)+" | "+rs.getString(2)+" | "+rs.getString(3)+" | "+rs.getDate(5));
-            System.out.println("---------------------------------------------------");
+            System.out.println("-----------------------------------------------------------------");
          }
 		}
 	
