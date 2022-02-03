@@ -97,8 +97,8 @@ public class AdminControlBook {
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "mysql@richa");
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		System.out.println("B_ID  NAME  AUTHOR  U_ID  R_DATE");
-		System.out.println("-------------------------------------"); 
+		System.out.println("B_ID  NAME  AUTHOR  U_ID  R_DATE(YYYY/MM/DD)");
+		System.out.println("------------------------------------------------"); 
 		String sql = "SELECT * FROM book_request";
 		Statement stmt =con.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
@@ -118,8 +118,8 @@ public class AdminControlBook {
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "mysql@richa");
 		try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		System.out.println("B_ID  NAME  AUTHOR  U_ID  I_DATE");
-		System.out.println("-----------------------------------");
+		System.out.println("B_ID  NAME  AUTHOR  U_ID  I_DATE(YYYY/MM/DD)");
+		System.out.println("----------------------------------------------");
 		String sql = "SELECT * FROM accepted_request";
 		Statement stmt =con.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
@@ -140,54 +140,68 @@ public class AdminControlBook {
 		 int val;
 		 try {
 		Class.forName("com.mysql.cj.jdbc.Driver");
-		String s="SELECT book_id,user_id from Accepted_request where book_id= '"+id+"'and user_id='"+u_id+"'" ;
+		String s="SELECT name,username from users_table where user_id='"+u_id+"'" ;
 		Statement stmt =con.createStatement();
 		ResultSet r = stmt.executeQuery(s);
 		if(r.next())
-		{
-			System.out.println("Already issued");
-		}
-		else
-		{
-		String sql1="SELECT * from BOOKS where book_id= '"+id + "' and count>0";
-	
-		ResultSet rs = stmt.executeQuery(sql1);
-			if(rs.next())
 			{
+				String s1="SELECT book_id,user_id from Accepted_request where book_id= '"+id+"'and user_id='"+u_id+"'" ;
+				ResultSet r1 = stmt.executeQuery(s);
+				if(r1.next())
+				{
+					System.out.println("Already issued");
+				}
+
+				else
+			{
+			String sql1="SELECT * from BOOKS where book_id= '"+id + "' and count>0";
+		
+			ResultSet rs = stmt.executeQuery(sql1);
+				if(rs.next())
+				{
+					
+					String query="SELECT book_name,author from BOOKS where book_id= '"+id+"'" ;
+					ResultSet rs1 = stmt.executeQuery(query);
+					String name;
+					String author;
+				while(rs1.next()) {
+					name=rs1.getString(1);
+					author=rs1.getString(2);
+					String sql = "INSERT INTO accepted_request (book_id,book_name,author,user_id,issued_date) values (?,?,?,?,CURRENT_TIMESTAMP);";
+			         PreparedStatement pmt=con.prepareStatement(sql);
+			         pmt.setInt(1, id);
+			         pmt.setString(2, name);
+			         pmt.setString(3, author);
+			         pmt.setInt(4, u_id);
+			         pmt.executeUpdate();
+			      
+				}
+				String query2="update books set count= count-1 where book_id='"+id +"'";
+				boolean rs2=stmt.execute(query2);
+				String sql2 ="delete from book_request Where BOOK_ID='" + id  + "' and user_id='" +u_id + "'";
 				
-				String query="SELECT book_name,author from BOOKS where book_id= '"+id+"'" ;
-				ResultSet rs1 = stmt.executeQuery(query);
-				String name;
-				String author;
-			while(rs1.next()) {
-				name=rs1.getString(1);
-				author=rs1.getString(2);
-				String sql = "INSERT INTO accepted_request (book_id,book_name,author,user_id,issued_date) values (?,?,?,?,CURRENT_TIMESTAMP);";
-		         PreparedStatement pmt=con.prepareStatement(sql);
-		         pmt.setInt(1, id);
-		         pmt.setString(2, name);
-		         pmt.setString(3, author);
-		         pmt.setInt(4, u_id);
-		         pmt.executeUpdate();
-		      
-			}
-			String query2="update books set count= count-1 where book_id='"+id +"'";
-			boolean rs2=stmt.execute(query2);
-			String sql2 ="delete from book_request Where BOOK_ID='" + id  + "' and user_id='" +u_id + "'";
+		         boolean rs3=stmt.execute(sql2);
+		        System.out.println("Request accepted successfully.");
 			
-	         boolean rs3=stmt.execute(sql2);
-	        System.out.println("Request accepted successfully.");
+				}
+				
+				else {
+					System.out.println("Book not available.");
+				}
+			}
+			}
+		else 
+		{
+			System.out.println("User does not exist");
+		 }
 		
 			}
-			
-			else {
-				System.out.println("Book not available.");
-			}
-		}
 		
 		
-	}catch (SQLException err) {
+	catch (SQLException err) {
 	    err.printStackTrace();
-	 }
+
+	}
+
 }
 }
